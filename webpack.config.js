@@ -11,12 +11,13 @@ let config = {
   resolve: {
     extensions: ['.js', '.ts', '.vue']
   },
+  devtool: 'inline-source-map',
   devServer: {
     noInfo: true
   },
   module: {
     rules: [{
-      test: /\.tsx?$/,
+      test: /\.ts$/,
       use: [{
         loader: 'ts-vue-loader'
       }, {
@@ -27,6 +28,18 @@ let config = {
       }]
     },{
       test: /\.html$/, use: 'vue-template-loader'
+    },{
+      test: /\.s[ac]ss$/i,
+      use: [
+        'style-loader',
+        'css-loader',
+        'sass-loader',
+      ],
+    },{
+      test: /\.(png|svg|jpg|gif)$/,
+      use: [
+        'file-loader',
+      ],
     }]
   }
 }
