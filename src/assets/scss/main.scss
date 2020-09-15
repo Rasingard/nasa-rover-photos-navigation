@@ -1,8 +1,25 @@
 @import '~bootstrap';
 @import '~bootstrap-vue';
 
-body {
+html, body {
+  height: 100%;
+  width: 100%;
   background-color: black;
+}
+
+#bg {
+  height: 100%;
   background-image: url("../images/bg.jpg");
   background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+#app-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
 }

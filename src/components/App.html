@@ -1,8 +1,87 @@
 <div>
-  Main APP {{ start + number }}
+  <b-container class="p-2">
+    <b-form @submit="onSubmit" @reset="onReset" class="pb-4">
+      <b-form-group
+        id="input-group-1"
+        label="Rover:"
+        label-for="input-1"
+        description="Description"
+      >
+        <b-form-select
+          v-model="form.rover.selected"
+          :options="form.rover.options"
+        ></b-form-select>
+      </b-form-group>
 
-  <b-button>Button</b-button>
-  <b-button variant="danger">Button</b-button>
-  <b-button variant="success">Button</b-button>
-  <b-button variant="outline-primary">Button</b-button>
+      <b-form-group
+        id="input-group-2"
+        label="Date:"
+        label-for="input-2"
+        description="Description"
+      >
+        <b-form-datepicker :disabled="!form.date.selected" v-model="form.date.selected" :min="form.date.min" :max="form.date.max" locale="en"></b-form-datepicker>
+      </b-form-group>
+
+      <b-form-group
+        id="input-group-3"
+        label="Camera:"
+        label-for="input-3"
+        description="Description"
+      >
+        <!--<b-form-select v-model="form.camera.selected" :options="form.camera.options"></b-form-select>-->
+
+        <b-form-select v-model="form.camera.selected">
+          <b-form-select-option value="all">All</b-form-select-option>
+          <b-form-select-option value="fhaz"
+            >Front Hazard Avoidance Camera</b-form-select-option
+          >
+          <b-form-select-option value="rhaz"
+            >Rear Hazard Avoidance Camera</b-form-select-option
+          >
+          <b-form-select-option value="mast" v-if="validCamera('mast')"
+            >Mast Camera</b-form-select-option
+          >
+          <b-form-select-option value="chemcam" v-if="validCamera('chemcam')"
+            >Chemistry and Camera Complex</b-form-select-option
+          >
+          <b-form-select-option value="mahli" v-if="validCamera('mahli')"
+            >Mars Hand Lens Imager</b-form-select-option
+          >
+          <b-form-select-option value="mardi" v-if="validCamera('mardi')"
+            >Mars Descent Imager</b-form-select-option
+          >
+          <b-form-select-option value="navcam"
+            >Navigation Camera</b-form-select-option
+          >
+          <b-form-select-option value="pancam" v-if="validCamera('pancam')"
+            >Panoramic Camera</b-form-select-option
+          >
+          <b-form-select-option value="minites" v-if="validCamera('minites')"
+            >Miniature Thermal Emission Spectrometer
+            (Mini-TES)</b-form-select-option
+          >
+        </b-form-select>
+      </b-form-group>
+
+      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="reset" variant="danger">Reset</b-button>
+    </b-form>
+
+    <b-carousel
+      v-if="images.length > 0"
+      id="carousel-1"
+      :interval="4000"
+      controls
+      indicators
+      background="#ababab"
+      style="text-shadow: 1px 1px 2px #333;"
+    >
+      <!-- Text slides with image -->
+      <b-carousel-slide
+        v-for="image in images"
+        :key="image.id"
+        :img-src="image.img_src"
+      ></b-carousel-slide>
+    </b-carousel>
+  </b-container>
 </div>
