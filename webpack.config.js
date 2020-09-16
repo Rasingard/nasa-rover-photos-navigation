@@ -37,9 +37,12 @@ let config = {
       ],
     },{
       test: /\.(png|svg|jpg|gif)$/,
-      use: [
-        'file-loader',
-      ],
+      use: [{
+        loader: 'file-loader',
+        options: {
+          publicPath: 'dist'
+        }
+      }],
     }]
   }
 }
