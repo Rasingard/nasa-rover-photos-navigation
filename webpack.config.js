@@ -13,7 +13,8 @@ let config = {
   },
   devtool: 'inline-source-map',
   devServer: {
-    noInfo: true
+    noInfo: true,
+    open: true
   },
   module: {
     rules: [{
