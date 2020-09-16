@@ -38,7 +38,7 @@
     <div v-if="images && images.length > 0">
       <b-pagination v-if="images.length > 25" v-model="paging.current" :total-rows="images.length" :per-page="paging.size"></b-pagination>
 
-      <div class="col-12 p-0 d-flex justify-content-around flex-wrap">
+      <div class="col-12 p-0 d-flex justify-content-left flex-wrap">
         <b-img thumbnail fluid class="mr-2 mb-2" v-for="(image, i) in pagePhotos" :src="image" :key="i" @click="index = i" style="height: 100px;"></b-img>
       </div>
 
