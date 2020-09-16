@@ -1,11 +1,15 @@
-import {Vue, Component, Watch, PropSync} from 'vue-property-decorator'
-import { API, HTTP } from '../services/http';
+import {Vue, Component, Watch} from 'vue-property-decorator'
+import { API } from '../services/http';
 import Render from './App.html'
+const VueGallerySlideshow = require('vue-gallery-slideshow');
 
 @Render
-@Component({})
+@Component({
+  components: {VueGallerySlideshow}
+})
 
 export default class App extends Vue {
+  index:number = 0;
   images:any = [];
   manifest:any = {};
 
@@ -31,11 +35,15 @@ export default class App extends Vue {
 
     this.form.camera.selected = firstAvailable;
 
-    if(firstAvailable === this.form.camera.selected) this.loadRoverPhotos();
+    if(firstAvailable === this.form.camera.selected) {
+      this.paging.current = 1;
+      this.loadRoverPhotos();
+    }
   }
 
   @Watch('form.camera.selected')
   onCameraChanged(val: string, oldVal: string) {
+    this.paging.current = 1;
     this.loadRoverPhotos();
   }
 
@@ -66,9 +74,12 @@ export default class App extends Vue {
       selected: '',
       min: '',
       max: ''
-    },
-    sol: 1000,
-    page: 1
+    }
+  }
+
+  paging = {
+    current: 1,
+    size: 25
   }
 
   loadRoverPhotos() {
@@ -77,7 +88,7 @@ export default class App extends Vue {
       earth_date: this.form.date.selected
     }).then(data => {
       if(data?.photos.length > 0) {
-        this.images = data.photos;
+        this.images = data.photos.map((p:any) => p.img_src);
       }
     });
   }
@@ -91,15 +102,11 @@ export default class App extends Vue {
       });
   }
 
-  onSubmit(ev:Event) {
-    ev.preventDefault();
-    this.loadRoverPhotos();
-    console.log(`onSubmit`);
-  }
+  get pagePhotos():Array<string> {
+    const start = this.paging.size * (this.paging.current - 1);
+    const end = this.paging.size * this.paging.current;
 
-  onReset(ev:Event) {
-    ev.preventDefault();
-    console.log(`onReset`);
+    return this.images.slice(start, end);;
   }
 
   mounted() {

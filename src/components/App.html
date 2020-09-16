@@ -1,6 +1,6 @@
 <div>
   <b-container class="p-2">
-    <b-form @submit="onSubmit" @reset="onReset" class="pb-5 row">
+    <b-form class="pb-5 row">
       <b-form-group
         id="input-group-1"
         label="Rover:"
@@ -34,23 +34,13 @@
         <b-form-select v-model="form.camera.selected" :options="form.camera.options"></b-form-select>
       </b-form-group>
     </b-form>
+  </b-container>
 
-    <b-carousel
-      v-if="images.length > 0"
-      id="carousel-1"
-      :interval="4000"
-      controls
-      indicators
-      background="#ababab"
-      img-height="500"
-      style="text-shadow: 1px 1px 2px #333;"
-    >
-      <!-- Text slides with image -->
-      <b-carousel-slide
-        v-for="image in images"
-        :key="image.id"
-        :img-src="image.img_src"
-      ></b-carousel-slide>
-    </b-carousel>
+  <b-container v-if="images && images.length > 0" class="p-2">
+    <b-pagination v-if="images.length > 25" v-model="paging.current" :total-rows="images.length" :per-page="paging.size"></b-pagination>
+
+    <b-img thumbnail fluid class="mr-2 mb-2" v-for="(image, i) in pagePhotos" :src="image" :key="i" @click="index = i" style="height: 100px;"></b-img>
+
+    <vue-gallery-slideshow :images="pagePhotos" :index="index" @close="index = null"></vue-gallery-slideshow>
   </b-container>
 </div>
