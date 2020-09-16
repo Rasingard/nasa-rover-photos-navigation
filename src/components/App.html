@@ -5,7 +5,7 @@
         id="input-group-1"
         label="Rover:"
         label-for="input-1"
-        class="col"
+        class="col-12 col-lg-3"
         style="color: white"
       >
         <b-form-select
@@ -18,7 +18,7 @@
         id="input-group-2"
         label="Date:"
         label-for="input-2"
-        class="col"
+        class="col-12 col-md-6 col-lg-6"
         style="color: white"
       >
         <b-form-datepicker :disabled="!form.date.selected" v-model="form.date.selected" :min="form.date.min" :max="form.date.max" locale="en"></b-form-datepicker>
@@ -28,19 +28,21 @@
         id="input-group-3"
         label="Camera:"
         label-for="input-3"
-        class="col"
+        class="col-12 col-md-6 col-lg-3"
         style="color: white"
       >
         <b-form-select v-model="form.camera.selected" :options="form.camera.options"></b-form-select>
       </b-form-group>
     </b-form>
-  </b-container>
 
-  <b-container v-if="images && images.length > 0" class="p-2">
-    <b-pagination v-if="images.length > 25" v-model="paging.current" :total-rows="images.length" :per-page="paging.size"></b-pagination>
+    <div v-if="images && images.length > 0">
+      <b-pagination v-if="images.length > 25" v-model="paging.current" :total-rows="images.length" :per-page="paging.size"></b-pagination>
 
-    <b-img thumbnail fluid class="mr-2 mb-2" v-for="(image, i) in pagePhotos" :src="image" :key="i" @click="index = i" style="height: 100px;"></b-img>
+      <div class="col-12 p-0 d-flex justify-content-around flex-wrap">
+        <b-img thumbnail fluid class="mr-2 mb-2" v-for="(image, i) in pagePhotos" :src="image" :key="i" @click="index = i" style="height: 100px;"></b-img>
+      </div>
 
-    <vue-gallery-slideshow :images="pagePhotos" :index="index" @close="index = null"></vue-gallery-slideshow>
+      <vue-gallery-slideshow :images="pagePhotos" :index="index" @close="index = null"></vue-gallery-slideshow>
+    </div>
   </b-container>
 </div>
