@@ -1,4 +1,4 @@
-import {Vue, Component, Watch} from 'vue-property-decorator'
+import {Vue, Component, Watch, PropSync} from 'vue-property-decorator'
 import { API, HTTP } from '../services/http';
 import Render from './App.html'
 
@@ -6,23 +6,38 @@ import Render from './App.html'
 @Component({})
 
 export default class App extends Vue {
+  images:any = [];
+  manifest:any = {};
 
   @Watch('form.rover.selected')
   onRoverChanged(val: string, oldVal: string) {
-    this.form.camera.selected = 'all';
-    this.form.date.selected = '';
     this.loadManifest();
   }
 
   @Watch('form.date.selected')
-  ondaterChanged(val: string, oldVal: string) {
-    console.log(val);
-    this.form.camera.available = this.manifest.photos.find(sol => sol.earth_date = val).cameras;
-    this.form.camera.selected = 'all';
+  onDateChanged(val: string, oldVal: string) {
+    const source = this.manifest.photos.find((item:any) => item.earth_date === val);
+
+    let firstAvailable:any = undefined;
+
+    this.form.camera.options.forEach(camera => {
+      if(source.cameras.find((val:any) => val.toLowerCase() === camera.value)) {
+        camera.disabled = false;
+        if(!firstAvailable) firstAvailable = camera.value;
+      } else {
+        camera.disabled = true;
+      }
+    });
+
+    this.form.camera.selected = firstAvailable;
+
+    if(firstAvailable === this.form.camera.selected) this.loadRoverPhotos();
   }
 
-  images:any = [];
-  manifest:any = {};
+  @Watch('form.camera.selected')
+  onCameraChanged(val: string, oldVal: string) {
+    this.loadRoverPhotos();
+  }
 
   form = {
     rover: {
@@ -35,7 +50,17 @@ export default class App extends Vue {
     },
     camera: {
       selected: 'all',
-      available: []
+      options: [
+        { value: 'fhaz', text: 'Front Hazard Avoidance Camera', disabled: false },
+        { value: 'rhaz', text: 'Rear Hazard Avoidance Camera', disabled: false },
+        { value: 'mast', text: 'Mast Camera', disabled: false },
+        { value: 'chemcam', text: 'Chemistry and Camera Complex', disabled: false },
+        { value: 'mahli', text: 'Mars Hand Lens Imager', disabled: false },
+        { value: 'mardi', text: 'Mars Descent Imager', disabled: false },
+        { value: 'navcam', text: 'Navigation Camera', disabled: false },
+        { value: 'pancam', text: 'Panoramic Camera', disabled: false },
+        { value: 'minites', text: 'Miniature Thermal Emission Spectrometer (Mini-TES)', disabled: false }
+      ]
     },
     date: {
       selected: '',
@@ -43,10 +68,10 @@ export default class App extends Vue {
       max: ''
     },
     sol: 1000,
-    page: 1,
+    page: 1
   }
 
-  loadData() {
+  loadRoverPhotos() {
     API.getRoverPhotos(this.form.rover.selected, {
       camera: this.form.camera.selected,
       earth_date: this.form.date.selected
@@ -62,18 +87,13 @@ export default class App extends Vue {
       .then(data => {
         this.manifest = data.photo_manifest;
         this.form.date.min = data.photo_manifest.landing_date;
-        this.form.date.max = data.photo_manifest.max_date;
-        this.form.date.selected = data.photo_manifest.landing_date;
+        this.form.date.selected = this.form.date.max = data.photo_manifest.max_date;
       });
-  }
-
-  validCamera(cameraId:String): boolean {
-    return !!this.form.camera.available.find(id => id === cameraId);
   }
 
   onSubmit(ev:Event) {
     ev.preventDefault();
-    this.loadData();
+    this.loadRoverPhotos();
     console.log(`onSubmit`);
   }
 
